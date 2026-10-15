@@ -23,6 +23,7 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 DAILY_CHANNEL_ID =1536064553077448846
+VERSION = "1.0-beta1"
 
 # Staff are detected automatically by Discord permission:
 #   /banvosr -> Ban Members | /mutevosr -> Moderate Members
@@ -440,13 +441,13 @@ async def testdaily(ctx: commands.Context):
         await ctx.send("❌ Couldn't send it. Check the daily channel ID and my permissions there.")
 
 # ==============================
-# NETWORK PING DEBUG
+# NETWORK PING DEBUG / INFO STATUS
 # ==============================
 
 @tasks.loop(minutes=5)
 async def ping_status_loop():
     latency = round(bot.latency * 1000)
-    await bot.change_presence(activity=discord.Game(name=f"Ping: {latency}ms"))
+    await bot.change_presence(activity=discord.Game(name=f"meow // {latency}ms - {VERSION}"))
 
 @ping_status_loop.before_loop
 async def before_ping_status_loop():
