@@ -54,6 +54,7 @@ class N0rvexBuddy(commands.Bot):
         print(f"Synced {len(synced)} slash commands")
         expiry_loop.start()
         daily_message.start()
+        ping_status_loop.start()
 
 
 bot = N0rvexBuddy(command_prefix="!", intents=intents)
@@ -438,6 +439,18 @@ async def testdaily(ctx: commands.Context):
     else:
         await ctx.send("❌ Couldn't send it. Check the daily channel ID and my permissions there.")
 
+# ==============================
+# NETWORK PING DEBUG
+# ==============================
+
+@tasks.loop(minutes=5)
+async def ping_status_loop():
+    latency = round(bot.latency * 1000)
+    await bot.change_presence(activity=discord.Game(name=f"Ping: {latency}ms"))
+
+@ping_status_loop.before_loop
+async def before_ping_status_loop():
+    await bot.wait_until_ready()
 
 # ==============================
 # RUN
