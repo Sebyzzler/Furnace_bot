@@ -23,14 +23,16 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 DAILY_CHANNEL_ID =1536064553077448846
-VERSION = "1.0-beta2" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
+VERSION = "1.0-beta3" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
 
 # Staff are detected automatically by Discord permission:
 #   /banvosr -> Ban Members | /mutevosr -> Moderate Members
 #   /kickvosr -> Kick Members | /hidechannelvosr -> Manage Channels
 # Administrators can use all of them.
 # Optional: also allow specific roles regardless of permissions, e.g. {"Moderator", "Helper"}
-EXTRA_STAFF_ROLES = set()
+EXTRA_STAFF_ROLES = {
+    "Sacrificement Ritual Members",
+}
 
 # Roles the commands can be used ON (the target needs any one of them).
 # Leave empty ( set() ) to allow targeting anyone, apart from the safety checks.
