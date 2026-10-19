@@ -21,13 +21,16 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 DAILY_CHANNEL_ID =1536064553077448846
+VERSION = "1.0-beta4" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
 
 # Staff are detected automatically by Discord permission:
 #   /banvosr -> Ban Members | /mutevosr -> Moderate Members
 #   /kickvosr -> Kick Members | /hidechannelvosr -> Manage Channels
 # Administrators can use all of them.
 # Optional: also allow specific roles regardless of permissions, e.g. {"Moderator", "Helper"}
-EXTRA_STAFF_ROLES = set()
+EXTRA_STAFF_ROLES = {
+    "Sacrificement Ritual Members",
+}
 
 # Roles the commands can be used ON (the target needs any one of them).
 # Leave empty ( set() ) to allow targeting anyone, apart from the safety checks.
@@ -52,6 +55,7 @@ class N0rvexBuddy(commands.Bot):
         print(f"Synced {len(synced)} slash commands")
         expiry_loop.start()
         daily_message.start()
+        ping_status_loop.start()
 
 
 bot = N0rvexBuddy(command_prefix="!", intents=intents)
@@ -436,6 +440,28 @@ async def testdaily(ctx: commands.Context):
     else:
         await ctx.send("❌ Couldn't send it. Check the daily channel ID and my permissions there.")
 
+# ==============================
+# NETWORK PING DEBUG / INFO STATUS
+# ==============================
+
+RANDOM_STATUS = [
+    "meow",
+    "Hi!!",
+    "99% vibecoded",
+    "Bye!!",
+]
+
+@tasks.loop(minutes=5)
+    randomtextstatus = random.choice(RANDOM_STATUS)
+    
+    await bot.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{randomtextstatus} // {VERSION} - {latency}ms"
+        )
+    )
+
+    await bot.wait_until_ready()
 
 # ==============================
 # RUN
