@@ -21,7 +21,7 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 DAILY_CHANNEL_ID =1536064553077448846
-VERSION = "1.0-beta6" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
+VERSION = "1.0" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
 
 # Staff are detected automatically by Discord permission:
 #   /banvosr -> Ban Members | /mutevosr -> Moderate Members
