@@ -21,7 +21,7 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 DAILY_CHANNEL_ID =1536064553077448846
-VERSION = "1.0-beta4" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
+VERSION = "1.0-beta5" # Update the version number when committing changes, if this is on experimental.py, use "beta" or "alpha" so i can know this code is gonna be flaky
 
 # Staff are detected automatically by Discord permission:
 #   /banvosr -> Ban Members | /mutevosr -> Moderate Members
@@ -55,7 +55,6 @@ class N0rvexBuddy(commands.Bot):
         print(f"Synced {len(synced)} slash commands")
         expiry_loop.start()
         daily_message.start()
-        ping_status_loop.start()
 
 
 bot = N0rvexBuddy(command_prefix="!", intents=intents)
@@ -441,7 +440,7 @@ async def testdaily(ctx: commands.Context):
         await ctx.send("❌ Couldn't send it. Check the daily channel ID and my permissions there.")
 
 # ==============================
-# NETWORK PING DEBUG / INFO STATUS
+# INFO STATUS
 # ==============================
 
 RANDOM_STATUS = [
@@ -452,16 +451,21 @@ RANDOM_STATUS = [
 ]
 
 @tasks.loop(minutes=5)
+async def ping_status_loop():
     randomtextstatus = random.choice(RANDOM_STATUS)
     
     await bot.change_presence(
         activity=discord.Activity(
             type=discord.ActivityType.watching,
-            name=f"{randomtextstatus} // {VERSION} - {latency}ms"
+            name=f"{randomtextstatus} // {VERSION}"
         )
     )
 
+@ping_status_loop.before_loop
+async def before_ping_status_loop():
     await bot.wait_until_ready()
+
+ping_status_loop.start()
 
 # ==============================
 # RUN
