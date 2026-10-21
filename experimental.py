@@ -1,3 +1,5 @@
+# ==== EXPERIMENTAL CHANGES: may receive constant update for fixes as i push random changes to it! ====
+
 import asyncio
 import json
 import logging
@@ -26,9 +28,22 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 CAT_API_KEY = os.getenv("CAT_API_KEY")  # optional, only for higher rate limits
 
 BOT_NAME = "Furnace"
+VERSION_NUMBER = "1.1-beta1"
 PREFIX = "!"
 TIMEZONE = "Europe/Bucharest"
 DATA_FILE = "furnace_data.json"
+
+# ---- Straight Random Activity Message ----
+
+ACTIVITY_AUTOCHANGE_INTERVAL_MINUTES = 10
+RANDOM_ACTIVITY_MESSAGES = [
+    "67676767",
+    "mrrraoww",
+    "Hi",
+    "Bye",
+    "commando is the best mod ever",
+    "N0rvex is my dad",
+]
 
 # ---- Daily question ----
 DAILY_CHANNEL_ID = 1552389956054425711
@@ -746,6 +761,7 @@ class Furnace(commands.Bot):
         for cog in (Moderation, Fun, Cats, Daily, Help):
             await self.add_cog(cog(self))
         synced = await self.tree.sync()
+        self.change_status.start()
         print(f"Synced {len(synced)} slash commands")
 
     async def close(self):
@@ -755,6 +771,19 @@ class Furnace(commands.Bot):
 
     async def on_ready(self):
         print(f"Logged in as {self.user} ({self.user.id})")
+
+    @tasks.loop(minutes=ACTIVITY_AUTOCHANGE_INTERVAL_MINUTES)
+    async def change_status(self):
+        random_msg = random.choice(RANDOM_ACTIVITY_MESSAGES)
+        activity = discord.Activity(
+            type=discord.ActivityType.watching,
+            name=f"{random_msg} // {VERSION_NUMBER}"
+        )
+        await self.change_presence(activity=activity)
+
+    @change_status.before_loop
+    async def before_change_status(self):
+        await self.wait_until_ready()
 
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
         if isinstance(error, commands.CommandNotFound):
